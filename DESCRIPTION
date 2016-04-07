@@ -1,0 +1,27 @@
+Package: glida
+Title: A tool for visualisation and exploration of LD patterns
+Version: 0.0.0.9000
+Authors@R: person("Nick", "Burns", email = "nick.burns@otago.ac.nz", role = c("aut", "cre"))
+Description: GLIDA provides  a range of functions to help explore patterns of
+    LD about interesting genetic loci. Includes: functions to create LD
+    datasets from VCF files, functions to visualise and explore these patterns
+    of LD, as well as functions to annotate LD plots by querying UCSC's
+    Ensembl tables for protein-coding genes.
+Depends:
+    R (>= 3.2.2)
+License: GPL
+Encoding: UTF-8
+LazyData: true
+Imports:
+    ggplot2,
+    RMySQL,
+    dplyr,
+    reshape2,
+    ggrepel,
+    RColorBrewer,
+    pvclust,
+    DBI
+Suggests:
+    biomaRt
+RoxygenNote: 5.0.1
+SystemRequirements: bash

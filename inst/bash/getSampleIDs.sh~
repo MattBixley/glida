@@ -1,0 +1,13 @@
+#! /bin/bash
+
+# GetSampleIDs.sh
+#
+# Given a population ($1) extract all relevant sample IDs 
+# and write to samples_list.txt
+
+POPFILE=./Data/1KGPopulations.panel
+POP=$1
+PIPE=$2
+OUTFILE=$3
+
+grep ${POP} ${POPFILE} | cut -f1 ${PIPE} ${OUTFILE}
