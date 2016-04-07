@@ -28,6 +28,7 @@ ldHeatmap <- function (ldMatrix, clustMethod = "ward.D", distMethod = "euclidean
 #' @param clustMethod character. Method for clustering ("average", "ward.D", "ward.D2", "single", "complete", "mcquitty", "median" or "centroid")
 #' @param distMethod character. Method for calculating distances between SNPs. see pvclust help.
 #' @return pvclust cluster object.
+#' @export
 ldCluster <- function (ldMatrix, clustMethod = "ward.D", distMethod = "euclidean") {
 
     lclCluster <- pvclust::pvclust(ldMatrix,
