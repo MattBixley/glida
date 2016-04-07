@@ -1,10 +1,10 @@
 #' Establishes a connection to UCSC's public MySQL server
 openConn <- function (genomeBuild = "hg19") {
 
-    # turn off warnings that the DB connector throws
-    # (annoying non-informative messages)
-    preState <- options("warn")
-    options(warn = -1)
+#     # turn off warnings that the DB connector throws
+#     # (annoying non-informative messages)
+#     preState <- options("warn")
+#     options(warn = -1)
 
     # connect to the database
     #drv <- DBI::dbDriver("MySQL")
@@ -14,8 +14,8 @@ openConn <- function (genomeBuild = "hg19") {
                               dbname=genomeBuild,
                               password="")
 
-    # reset the warnings
-    options(warn = preState$warn)
+#     # reset the warnings
+#     options(warn = preState$warn)
     return (conn)
 }
 
@@ -32,9 +32,17 @@ closeConn <- function (conn) {
 queryUCSC <- function (query) {
 
     try({
+        # turn off warnings that the DB connector throws
+        # (annoying non-informative messages)
+        preState <- options("warn")
+        options(warn = -1)
+        
         conn <- openConn()
         results <- DBI::dbGetQuery(conn, query)
         closeConn(conn)
+        
+        # reset the warnings
+        options(warn = preState$warn)
 
         return (results)
     })
