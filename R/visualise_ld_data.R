@@ -107,41 +107,51 @@ ldZoom <- function (ldData, ldThreshold=0.9) {
 #' @export
 geneAnnotation <- function (zoom, genes, geneType = "All") {
 
-    # wrangle the genes into a plotable format
-    lclGenes <- if (geneType == "All") genes
-                else genes[genes$geneType == genetype, ]
-    lclGenes$GeneStart <- lclGenes$GeneStart / 1000000
-    lclGenes$GeneEnd <- lclGenes$GeneEnd / 1000000
-
-    # set positions on y-axis.
-    # This is a dirty fudge in order to get a semi-readable layout
-    # STRATEGY:
-    #     1. create K rows of genes, maximum of 5 rows.
-    #     2. genes are ordered by geneStart, so layout succesive genes
-    #        row-by-row (thus nearby genes should be on separate rows)
-    #     3. Set a bound on the row position to be between 0 and 1, and then
-    #        further limit this to 0:-0.5.
-    N <- nrow(lclGenes)
-    K <- ceiling(N / 5)
-    bounds <- N / K
-    lclGenes$Yvalues <- - (0.5 / bounds) * rep(1:bounds, length.out = N)
-
-    # finally, colour the gene labels by geneType
-    colourByType <- factor(lclGenes$geneCategory)
-    colourByType <- as.integer(relevel(colourByType,
-                                       ref = "protein_coding"))
-
-    zoom <- zoom +
-        ggplot2::geom_segment(data = lclGenes,
-                              ggplot2::aes(x = GeneStart, xend = GeneEnd,
-                                           y = Yvalues, yend = Yvalues),
-                              size = 1, colour = "grey30", alpha = 0.5) +
-        ggrepel::geom_text_repel(data = lclGenes,
-                                 ggplot2::aes(x = (GeneStart + GeneEnd) / 2,
-                                              y = Yvalues,
-                                              label = GeneName),
-                                 colour = colourByType,
-                                 size = 3)
-
+    # Annotate the plot with "No Genes found" message if no genes
+    if (nrow(genes) == 0) {
+        zoom <- zoom +
+            ggplot2::geom_text(ggplot2::aes(x = (max(POS) + min(POS))/2, 
+                                            y = -0.2),
+                               label = "No genes in this region",
+                               colour = "grey30",
+                               size = 4)
+    } else {
+    
+        # wrangle the genes into a plotable format
+        lclGenes <- if (geneType == "All") genes
+                    else genes[genes$geneType == genetype, ]
+        lclGenes$GeneStart <- lclGenes$GeneStart / 1000000
+        lclGenes$GeneEnd <- lclGenes$GeneEnd / 1000000
+    
+        # set positions on y-axis.
+        # This is a dirty fudge in order to get a semi-readable layout
+        # STRATEGY:
+        #     1. create K rows of genes, maximum of 5 rows.
+        #     2. genes are ordered by geneStart, so layout succesive genes
+        #        row-by-row (thus nearby genes should be on separate rows)
+        #     3. Set a bound on the row position to be between 0 and 1, and
+        #        then further limit this to 0:-0.5.
+        N <- nrow(lclGenes)
+        K <- ceiling(N / 5)
+        bounds <- N / K
+        lclGenes$Yvalues <- - (0.5 / bounds) * rep(1:bounds, length.out = N)
+    
+        # finally, colour the gene labels by geneType
+        colourByType <- factor(lclGenes$geneCategory)
+        colourByType <- as.integer(relevel(colourByType,
+                                           ref = "protein_coding"))
+    
+        zoom <- zoom +
+            ggplot2::geom_segment(data = lclGenes,
+                                  ggplot2::aes(x = GeneStart, xend = GeneEnd,
+                                               y = Yvalues, yend = Yvalues),
+                                  size = 1, colour = "grey30", alpha = 0.5) +
+            ggrepel::geom_text_repel(data = lclGenes,
+                                     ggplot2::aes(x = (GeneStart + GeneEnd) / 2,
+                                                  y = Yvalues,
+                                                  label = GeneName),
+                                     colour = colourByType,
+                                     size = 3)
+    }
     return (zoom)
 }
