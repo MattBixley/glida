@@ -7,8 +7,8 @@ openConn <- function (genomeBuild = "hg19") {
     options(warn = -1)
 
     # connect to the database
-    drv <- DBI::dbDriver("MySQL")
-    conn <- RMySQL::dbConnect(drv,
+    #drv <- DBI::dbDriver("MySQL")
+    conn <- RMySQL::dbConnect(RMySQL::MySQL(),
                               user="genome",
                               host="genome-mysql.cse.ucsc.edu",
                               dbname=genomeBuild,
