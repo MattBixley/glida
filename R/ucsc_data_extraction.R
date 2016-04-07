@@ -1,21 +1,13 @@
 #' Establishes a connection to UCSC's public MySQL server
 openConn <- function (genomeBuild = "hg19") {
 
-#     # turn off warnings that the DB connector throws
-#     # (annoying non-informative messages)
-#     preState <- options("warn")
-#     options(warn = -1)
-
     # connect to the database
-    #drv <- DBI::dbDriver("MySQL")
     conn <- RMySQL::dbConnect(RMySQL::MySQL(),
                               user="genome",
                               host="genome-mysql.cse.ucsc.edu",
                               dbname=genomeBuild,
                               password="")
 
-#     # reset the warnings
-#     options(warn = preState$warn)
     return (conn)
 }
 
