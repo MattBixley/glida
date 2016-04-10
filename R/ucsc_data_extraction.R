@@ -182,3 +182,23 @@ fromBiomaRt <- function (chromosome = NULL, start = NULL, end = NULL, genomeBuil
                              mart = ensemblMart)
     return (genes)
 }
+
+#' Given a vector of RSIDs, query UCSC for updated chromosomal positions
+#' 
+#' @param snps vector. A vector of RSIDs.
+#' @return query. To be passed as argument to queryUCSC().
+updatePositions <- function (snps) {
+    
+    formatSNPs <- sprintf("('%s')", paste(snps, collapse="','"))
+    query <- paste0("
+                    SELECT chrom,
+                           chromStart as POS,
+                           name as SNP,
+                           strand
+                    FROM snp142
+                    WHERE name IN ", formatSNPs, "
+                      AND chrom NOT LIKE 'chr%hap%';
+                    ")
+    
+    return (query)
+}
