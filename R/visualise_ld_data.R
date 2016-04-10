@@ -137,9 +137,14 @@ geneAnnotation <- function (zoom, genes, geneType = "All") {
         lclGenes$Yvalues <- - (0.5 / bounds) * rep(1:bounds, length.out = N)
     
         # finally, colour the gene labels by geneType
-        colourByType <- factor(lclGenes$geneCategory)
-        colourByType <- as.integer(relevel(colourByType,
-                                           ref = "protein_coding"))
+        encodeColours <- function (c) {
+            category <- if (c == "protein_coding") "navy"
+                        else if (c == "rna_gene") "magenta"
+                        else if (c == "pseudogene") "turquoise1"
+                        else "grey"
+            return (category)
+        }
+        colourByType <- unlist(lapply(lclGenes$geneCategory, encodeColours))
     
         zoom <- zoom +
             ggplot2::geom_segment(data = lclGenes,
