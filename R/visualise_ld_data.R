@@ -130,11 +130,14 @@ geneAnnotation <- function (zoom, genes, geneType = "All") {
         #     2. genes are ordered by geneStart, so layout succesive genes
         #        row-by-row (thus nearby genes should be on separate rows)
         #     3. Set a bound on the row position to be between 0 and 1, and
-        #        then further limit this to 0:-0.5.
+        #        then further limit this so that the gene panel is no more than
+        #        half the size of the plot panel. (using ggplot_build() to extract
+        #        the max y-value)
         N <- nrow(lclGenes)
         K <- ceiling(N / 5)
         bounds <- N / K
-        lclGenes$Yvalues <- - (0.5 / bounds) * rep(1:bounds, length.out = N)
+        panelDepth <- 0.5 * max(ggplot_build(zoom)$panel$ranges[[1]]$y.range)
+        lclGenes$Yvalues <- - (panelDepth / bounds) * rep(1:bounds, length.out = N)
     
         # finally, colour the gene labels by geneType
         encodeColours <- function (c) {
