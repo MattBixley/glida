@@ -9,21 +9,21 @@ Requires:
   - a VCF file (1000 Genomes data) for given region.
     Will download if not present}
 \usage{
-ldProxy(leadSNP, vcf = "", downloadVCF = FALSE, chromosome = NULL,
-  start = NULL, end = NULL, sampleFile = NULL, panelFile = NULL)
+ldProxy(leadSNP, vcfFile = "", download = FALSE, chromosome = NULL,
+  start = NULL, end = NULL, sampleFile = NULL)
 }
 \arguments{
 \item{leadSNP}{Character. The lead SNP of interest.}
-
-\item{vcf}{filename (DEFAULT = ""). Full (or relative) path of the VCF file}
-
-\item{downloadVCF}{Boolean (DEFAULT = FALSE). If TRUE, download the 1000 Genomes data for given region.}
 
 \item{chromosome}{Integer (DEFAULT = NULL. If donwloadVCF == TRUE, this must be set. See ldByRegion().}
 
 \item{start}{Integer (DEFAULT = NULL). If downloadVCF == TRUE, this must be set. See ldByRegion().}
 
 \item{end}{Integer (DEFAULT = NULL). If downloadVCF == TRUE, this must be set. See ldByRegion().}
+
+\item{vcf}{filename (DEFAULT = ""). Full (or relative) path of the VCF file}
+
+\item{downloadVCF}{Boolean (DEFAULT = FALSE). If TRUE, download the 1000 Genomes data for given region.}
 }
 \description{
 Given a lead SNP, calculates LD of all other SNP (relative to the lead SNP)

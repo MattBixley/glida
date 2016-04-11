@@ -60,7 +60,7 @@ ldPopulation <- function (populations,
 #' @param end CHARACTER. Please note, not integer.
 #' @param outputVCF. Filename.
 #' @export
-ld1KGRegion <- function (chromosome = NULL, 
+ldDownload <- function (chromosome = NULL, 
                          start = NULL, 
                          end = NULL,
                          outputVCF = NULL) {
@@ -104,7 +104,7 @@ ldByRegion <- function (chromosome = NULL,
               else vcfFile
     
     if (download == TRUE) {
-        ld1KGRegion(chromosome = chromosome, 
+        ldDownload(chromosome = chromosome, 
                     start = start,
                     end = end,
                     outputVCF = lclVCF)
@@ -144,17 +144,21 @@ ldProxy <- function(leadSNP,
         lclVCF <- sprintf("Genotype_%s_%s-%s.vcf",
                           chromosome, start, end)
         
-        ld1KGRegion(chromosome, start, end, 
+        ldDownload(chromosome, start, end, 
                    outputVCF = lclVCF)
         
     } else {
         lclVCF <- vcfFile
     }
 
+    lclSamples <- if (missing(sampleFile)) system.file("extdata", "sample_list.txt", package = "glida")
+                  else sampleFile
+    
     # calculate LD using PLINK2 (see ../exec/getProxy.sh)
-    ldCmd <- sprintf("%s %s %s",
+    ldCmd <- sprintf("%s %s %s %s",
                      system.file("bash", "getProxy.sh", package="glida"),
                      leadSNP,
-                     lclVCF)
+                     lclVCF,
+                     lclSamples)
     system(ldCmd)
 }
