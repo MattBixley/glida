@@ -30,7 +30,6 @@ ldPopulation <- function (populations,
     }
 
     if (allPops == TRUE) {
-        popfile = ""
         command <- sprintf("cut -f1 %s > %s", popfile, outputFile)
         decr <- 0
 
@@ -65,13 +64,23 @@ ldPopulation <- function (populations,
 #' @param start Integer The beginning of the region of interest (in base pairs).
 #' @param end Integer The end of the region of interest (in base pairs).
 #' @export
-ldByRegion <- function (chromosome, start, end) {
+ldByRegion <- function (chromosome, start, end,
+                        panelFile = NULL,
+                        samplesFile = NULL) {
 
+    lclSamples <- if (missing(samplesFile)) {
+        system.file("extdata", "sample_list.txt", package="glida")
+    } else samplesFile
+    
+    lclPanelFile <- if (missing(panelFile)) {
+        system.file("extdata", "1KGPopulations.panel", package="glida")
+    } else panelFile
+    
     ldCmd <- sprintf("%s %s %s %s %s %s",
                      system.file("bash", "getLD.sh", package="glida"),
                      system.file("extdata", "1KGPopulations.panel", package="glida"),
                      chromosome, start, end,
-                     system.file("extdata", "sample_list.txt", package="glida"))
+                     lclSamples)
     system(ldCmd)
 }
 

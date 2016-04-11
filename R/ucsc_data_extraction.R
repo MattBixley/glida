@@ -187,6 +187,7 @@ fromBiomaRt <- function (chromosome = NULL, start = NULL, end = NULL, genomeBuil
 #' 
 #' @param snps vector. A vector of RSIDs.
 #' @return query. To be passed as argument to queryUCSC().
+#' @export
 updatePositions <- function (snps) {
     
     formatSNPs <- sprintf("('%s')", paste(snps, collapse="','"))
