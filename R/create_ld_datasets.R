@@ -139,20 +139,17 @@ ldProxy <- function(leadSNP,
                     end = NULL,
                     sampleFile = NULL) {
 
+    lclVCF <- if (missing(vcfFile)) 
+                    sprintf("Genotype_%s_%s-%s.vcf", chromosome, start, end)
+              else vcfFile
+    lclSamples <- if (missing(sampleFile)) 
+                    system.file("extdata", "sample_list.txt", package = "glida")
+              else sampleFile
+    
     # If download is TRUE, or vcf file does not exists, download.
-    if (download == TRUE | !file.exists(vcfFile)) {
-        lclVCF <- sprintf("Genotype_%s_%s-%s.vcf",
-                          chromosome, start, end)
-        
-        ldDownload(chromosome, start, end, 
-                   outputVCF = lclVCF)
-        
-    } else {
-        lclVCF <- vcfFile
+    if (download == TRUE | !file.exists(lclVCF)) {
+        ldDownload(chromosome, start, end, outputVCF = lclVCF)
     }
-
-    lclSamples <- if (missing(sampleFile)) system.file("extdata", "sample_list.txt", package = "glida")
-                  else sampleFile
     
     # calculate LD using PLINK2 (see ../exec/getProxy.sh)
     ldCmd <- sprintf("%s %s %s %s",
