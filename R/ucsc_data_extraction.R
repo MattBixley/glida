@@ -192,7 +192,7 @@ updatePositions <- function (snps) {
     
     formatSNPs <- sprintf("('%s')", paste(snps, collapse="','"))
     query <- paste0("
-                    SELECT chrom,
+                    SELECT chrom as CHR,
                            chromStart as POS,
                            name as SNP,
                            strand
