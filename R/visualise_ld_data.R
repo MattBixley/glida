@@ -66,6 +66,10 @@ ldDendrogram <- function (ldClusters, plotTitle = "LD-based Clustering") {
 ldZoom <- function (ldData, ldThreshold=0.9) {
 
     ldData$POS <- ldData$BP_B / 1000000
+    plotTitle <- sprintf('Chromosome %s \n %s Mb - %s Mb',
+                         unique(ldData$CHR_A),
+                         round(min(ldData$POS), 2),
+                         round(max(ldData$POS), 2))
 
     # base plot, (POS, R2) with some custom colouring based on R2.
     zoom <- ggplot2::ggplot(ldData, ggplot2::aes(x = POS, y = R2)) +
@@ -74,7 +78,8 @@ ldZoom <- function (ldData, ldThreshold=0.9) {
         ggplot2::scale_colour_gradientn(colours=rainbow(3)) +
         ggplot2::xlab("Position (Mb)") +
         ggplot2::guides(size=FALSE, colour=FALSE) +
-        ggplot2::theme_bw()
+        ggplot2::theme_bw() +
+        ggplot2::ggtitle(plotTitle)
 
 
     # include SNP names, where R2 > ldThreshold
@@ -136,7 +141,8 @@ geneAnnotation <- function (zoom, genes, geneType = "All") {
         N <- nrow(lclGenes)
         K <- ceiling(N / 5)
         bounds <- N / K
-        panelDepth <- 0.5 * max(ggplot_build(zoom)$panel$ranges[[1]]$y.range)
+        yRange <- ggplot2::ggplot_build(zoom)$panel$ranges[[1]]$y.range
+        panelDepth <- 0.5 * max(yRange)
         lclGenes$Yvalues <- - (panelDepth / bounds) * rep(1:bounds, length.out = N)
     
         # finally, colour the gene labels by geneType
