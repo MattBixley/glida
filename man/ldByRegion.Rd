@@ -9,7 +9,8 @@ Requires:
     - bash script: ./exec/getLD.sh
     - sample_list.txt must be present}
 \usage{
-ldByRegion(chromosome, start, end)
+ldByRegion(chromosome = NULL, start = NULL, end = NULL,
+  download = FALSE, vcfFile = NULL, sampleFile = NULL)
 }
 \arguments{
 \item{chromosome}{Integer Chromosome number}

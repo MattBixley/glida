@@ -65,20 +65,18 @@ ld1KGRegion <- function (chromosome = NULL,
                          end = NULL,
                          outputVCF = NULL) {
     
-    if (missing(outputVCF)) {
-        lclVCF <- sprintf("Genotype_%s_%s-%s.vcf",
-                          chromosome, start, end)
-    } else {
-        lclVCF <- outputVCF
-    }
+    lclVCF <- if (missing(outputVCF)) sprintf("./Genotype_%s_%s-%s", chromosome, start, end)
+              else outputVCF
     
-    ldCommand <- sprintf("%s %s %s %s",
-                         system.file("bash", "get1KGRegion.sh", package="glida"),
-                         chromosome,
-                         start,
-                         end,
-                         lclVCF)
-    system(ldCommand)
+    print(lclVCF)
+    ldCmd <- sprintf("%s %s %s %s %s",
+                     system.file("bash", "get1KGRegion.sh", package="glida"),
+                     chromosome,
+                     start,
+                     end,
+                     lclVCF)
+    print(ldCmd)
+    system(ldCmd)
 }
 
 
@@ -134,23 +132,23 @@ ldByRegion <- function (chromosome = NULL,
 #' @param end Integer (DEFAULT = NULL). If downloadVCF == TRUE, this must be set. See ldByRegion().
 #' @export
 ldProxy <- function(leadSNP,
-                    vcf = "",
-                    downloadVCF = FALSE,
+                    vcfFile = "",
+                    download = FALSE,
                     chromosome = NULL,
                     start = NULL,
                     end = NULL,
-                    sampleFile = NULL,
-                    panelFile = NULL) {
+                    sampleFile = NULL) {
 
-    # If downloadVCF is TRUE, or vcf file does not exists, download.
-    if (downloadVCF == TRUE | !file.exists(vcf)) {
-        ldByRegion(chromosome, start, end, 
-                   panelFile = panelFile, sampleFile = sampleFile)
-        
+    # If download is TRUE, or vcf file does not exists, download.
+    if (download == TRUE | !file.exists(vcfFile)) {
         lclVCF <- sprintf("Genotype_%s_%s-%s.vcf",
                           chromosome, start, end)
+        
+        ld1KGRegion(chromosome, start, end, 
+                   outputVCF = lclVCF)
+        
     } else {
-        lclVCF <- vcf
+        lclVCF <- vcfFile
     }
 
     # calculate LD using PLINK2 (see ../exec/getProxy.sh)

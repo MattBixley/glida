@@ -10,7 +10,7 @@ Requires:
     Will download if not present}
 \usage{
 ldProxy(leadSNP, vcf = "", downloadVCF = FALSE, chromosome = NULL,
-  start = NULL, end = NULL)
+  start = NULL, end = NULL, sampleFile = NULL, panelFile = NULL)
 }
 \arguments{
 \item{leadSNP}{Character. The lead SNP of interest.}
