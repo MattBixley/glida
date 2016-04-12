@@ -132,7 +132,8 @@ ldByRegion <- function (chromosome = NULL,
 #' @param end Integer (DEFAULT = NULL). If downloadVCF == TRUE, this must be set. See ldByRegion().
 #' @export
 ldProxy <- function(leadSNP,
-                    vcfFile = "",
+                    vcfFile = NULL,
+                    ldOutput = NULL,
                     download = FALSE,
                     chromosome = NULL,
                     start = NULL,
@@ -144,7 +145,10 @@ ldProxy <- function(leadSNP,
               else vcfFile
     lclSamples <- if (missing(sampleFile)) 
                     system.file("extdata", "sample_list.txt", package = "glida")
-              else sampleFile
+                  else sampleFile
+    lclOutput <- if (missing(ldOutput)) 
+                    unlist(strsplit(lclVCF, "\\."))[1]
+                 else ldOutput
     
     # If download is TRUE, or vcf file does not exists, download.
     if (download == TRUE | !file.exists(lclVCF)) {
@@ -152,10 +156,11 @@ ldProxy <- function(leadSNP,
     }
     
     # calculate LD using PLINK2 (see ../exec/getProxy.sh)
-    ldCmd <- sprintf("%s %s %s %s",
+    ldCmd <- sprintf("%s %s %s %s %s",
                      system.file("bash", "getProxy.sh", package="glida"),
                      leadSNP,
                      lclVCF,
-                     lclSamples)
+                     lclSamples,
+                     lclOutput)
     system(ldCmd)
 }

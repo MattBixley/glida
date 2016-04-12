@@ -9,8 +9,8 @@ Requires:
   - a VCF file (1000 Genomes data) for given region.
     Will download if not present}
 \usage{
-ldProxy(leadSNP, vcfFile = "", download = FALSE, chromosome = NULL,
-  start = NULL, end = NULL, sampleFile = NULL)
+ldProxy(leadSNP, vcfFile = NULL, ldOutput = NULL, download = FALSE,
+  chromosome = NULL, start = NULL, end = NULL, sampleFile = NULL)
 }
 \arguments{
 \item{leadSNP}{Character. The lead SNP of interest.}
