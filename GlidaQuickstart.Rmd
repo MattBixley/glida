@@ -1,0 +1,131 @@
+---
+title: "GLIDAQuickstart"
+author: "Nick Burns"
+date: "13 April 2016"
+output: html_document
+---
+
+# Quickstart guide for GLIDA  
+
+The **G**enome **L**oci **I**nteractive **D**ata **A**nalysis (GLIDA) package provides a simple interface to explore patterns of linkage disequilibrium (LD) in regions of interest. Currently, it can be used to:  
+
+  1. Cluster SNPs based on LD to explore similarities / dissimilarities between SNPs.  
+  2. Visualise a loci, with LD calcuated relative to a lead SNP.  
+  3. Annotate plots with relevant genes.  
+  
+This doco will give a very quick walk through each of these areas. We will examine two loci of interest:  
+
+  - chromosome 11: 64500000 - 64600000  
+  - chromosome 2: 24750000 - 25750000  
+  
+## Installing GLIDA  
+
+GLIDA is currently available via GitHub:  
+
+```{r, echo = FALSE}
+library(devtools)
+devtools::install_github("nickb-/glida")
+
+library(glida)
+```
+
+## Clustering SNPs  
+
+Below, we will cluster the SNPs within the region of chromosome 11 and visualise the results. Data for our region will be downloaded from the 1000 Genomes project. Please note, that PLINK2 needs to be installed and within your PATH environment variable for this to work.  
+
+NOTE: *start* and *end* must both be characters. Entering these as integers causes R to do stupid things with naming the output files. This has been earmarked to be fixed in future versions of GLIDA. 
+
+**Step 1:** Download 1000 Genomes data  
+```{r}
+chromosome <- 11
+start <- "64500000"
+end <- "64600000"
+
+glida::ldDownload(chromosome = chromosome,
+                  start = start,
+                  end = end,
+                  outputVCF = "Genotypes_11_64500000-64600000.vcf")
+```
+
+The above is quite self-explanatory. Note that the outputVCF parameter is optional. If you leave this out, then a default filename is created. Feel free to experiment.  
+
+**Step 2:**  calculate the pairwise LD between all SNPs  
+```{r}
+glida::ldByRegion(vcfFile = "Genotypes_11_64500000-64600000.vcf")
+```
+
+The above will use the VCF file that we created in the previous step, and calculate the pairwise Ld between all SNPs. There are a variety of options when using the ```ldByRegion()``` function, perhaps most useful is that you can download the data and calculate the LD in one step using the ```download = TRUE``` option:
+
+```{r, eval = FALSE}
+glida::ldByRegion(chromosome = chromosome,
+                  start = start,
+                  end = end,
+                  vcfFile = "Genotypes_11_64500000-64600000.vcf",
+                  download = TRUE)
+```
+
+**Step 3:** Visualise LD data  
+
+Here, we will read in the LD data and then cluster it:  
+
+```{r}
+ldFile <- "Genotypes_11_64500000-64600000.ld"
+ldData <- glida::ldRead(ldFile)
+ldMatrix <- glida::ldDissimilarity(ldData)
+ldClusters <- glida::ldCluster(ldMatrix)
+```
+
+And finally, we can visualise the LD data:  
+
+```{r}
+glida::ldDendrogram(ldClusters)
+glida::ldHeatmap(ldMatrix)
+```
+
+There are various options to set the clustering method and distance metric. Default options are "ward.D2" and "euclidean" for clustering method and distance measures respectively.
+
+## Visualising Loci  
+
+In this section we will create "locus-zoom"-like plots, based on the LD patterns. Here we will use the region we have defined in chromosome 2. Note that the raw VCF file from 1000 Genomes is ~230 MB, so be warned :)
+
+**Step 1:** Download the VCF file and calculate LD relative to our SNP of interest.  
+
+We are going to plot the LD patterns relative to SNP rs10182181. You may use the ```ldDownload()``` function if you like, but you can also do this in one step using the ```ldProxy()``` function.  
+
+```{r}
+chromosome = 2
+start <- "24750000"
+end <- "25750000"
+snp = "rs10182181"
+
+glida::ldProxy(leadSNP = snp,
+               vcfFile = "Genotype_2_24750000-25750000.vcf",
+               ldOutput = "LDProxy_Region2",
+               download = TRUE,
+               chromosome = chromosome,
+               start = start,
+               end = end)
+```
+
+**Step 2:** read in the Ld data and visualise  
+
+```{r}
+ldFile <- "LDProxy_Region2.ld"
+ldData <- glida::ldRead(ldFile)
+ldPlot <- glida::ldZoom(ldData, ldThreshold = 0.9)
+ldPlot
+```
+
+As you can see, LD is plotted on the y-axis, against chromosomal position on the x-axis. The ldThreshold argument controls how many SNPs are named as well as the placement of hte two vertical grey lines.  
+
+**Step 3:** Annotating the plot with gene names  
+
+We can add gene names to this plot as well:  
+
+```{r}
+genes <- glida::queryUCSC(
+    glida::fromUCSCEnsemblGenes(chromosome = chromosome, start = start, end = end)
+)
+glida::geneAnnotation(zoom = ldPlot, genes = genes)
+```
+
