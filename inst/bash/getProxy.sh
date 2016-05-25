@@ -9,4 +9,5 @@ VCFFILE=$2
 SAMPLES=$3
 OUTFILE=$4
 
-~/GenomeTools/PLINK/plink --vcf ${VCFFILE} --keep-fam ${SAMPLES} --r2 --ld-snp ${SNP} --ld-window-kb 1000 --ld-window 99999 --ld-window-r2 0.05 --out ${OUTFILE}
+#~/GenomeTools/PLINK/plink --vcf ${VCFFILE} --keep-fam ${SAMPLES} --r2 --ld-snp ${SNP} --ld-window-kb 1000 --ld-window 99999 --ld-window-r2 0.05 --out ${OUTFILE}
+plink --vcf ${VCFFILE} --keep-fam ${SAMPLES} --r2 --ld-snp ${SNP} --ld-window-kb 1000 --ld-window 99999 --ld-window-r2 0.05 --out ${OUTFILE}
