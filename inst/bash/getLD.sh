@@ -16,6 +16,6 @@ VCFFILE=$1
 SAMPLES=$2
 
 # Calculate LD
-/home/nickb/GenomeTools/PLINK/plink --vcf ${VCFFILE} --keep-fam ${SAMPLES} --snps-only no-DI --r2 --out ${VCFFILE%.vcf}       
+plink --vcf ${VCFFILE} --keep-fam ${SAMPLES} --snps-only no-DI --r2 --out ${VCFFILE%.vcf}       
 
 
