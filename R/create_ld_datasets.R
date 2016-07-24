@@ -36,7 +36,7 @@ ldPopulation <- function (populations,
     } else {
         # extract by population
         pipeout <- ifelse (first == TRUE, ">", ">>")
-        command <- sprintf("%s %s %s %s",
+        command <- sprintf("%s %s %s %s %s",
                            system.file("bash", "getSampleIDs.sh", package = "glida"),
                            popfile,
                            populations[n],
@@ -54,20 +54,20 @@ ldPopulation <- function (populations,
 }
 
 #' Downloads a defined region from 1000 Genomes.
-#' 
-#' @param chromosome integer. 
+#'
+#' @param chromosome integer.
 #' @param start CHARACTER. Please note, not integer.
 #' @param end CHARACTER. Please note, not integer.
 #' @param outputVCF. Filename.
 #' @export
-ldDownload <- function (chromosome = NULL, 
-                         start = NULL, 
+ldDownload <- function (chromosome = NULL,
+                         start = NULL,
                          end = NULL,
                          outputVCF = NULL) {
-    
+
     lclVCF <- if (missing(outputVCF)) sprintf("./Genotype_%s_%s-%s", chromosome, start, end)
               else outputVCF
-    
+
     print(lclVCF)
     ldCmd <- sprintf("%s %s %s %s %s",
                      system.file("bash", "get1KGRegion.sh", package="glida"),
@@ -91,8 +91,8 @@ ldDownload <- function (chromosome = NULL,
 #' @param start Integer The beginning of the region of interest (in base pairs).
 #' @param end Integer The end of the region of interest (in base pairs).
 #' @export
-ldByRegion <- function (chromosome = NULL, 
-                        start = NULL, 
+ldByRegion <- function (chromosome = NULL,
+                        start = NULL,
                         end = NULL,
                         download = FALSE,
                         vcfFile = NULL,
@@ -102,14 +102,14 @@ ldByRegion <- function (chromosome = NULL,
                   else samplesFile
     lclVCF <- if (missing(vcfFile)) sprintf("Genotype_%s_%s-%s.vcf", chromosome, start, end)
               else vcfFile
-    
+
     if (download == TRUE) {
-        ldDownload(chromosome = chromosome, 
+        ldDownload(chromosome = chromosome,
                     start = start,
                     end = end,
                     outputVCF = lclVCF)
     }
-    
+
     ldCmd <- sprintf("%s %s %s",
                      system.file("bash", "getLD.sh", package = "glida"),
                      lclVCF,
@@ -140,21 +140,21 @@ ldProxy <- function(leadSNP,
                     end = NULL,
                     sampleFile = NULL) {
 
-    lclVCF <- if (missing(vcfFile)) 
+    lclVCF <- if (missing(vcfFile))
                     sprintf("Genotype_%s_%s-%s.vcf", chromosome, start, end)
               else vcfFile
-    lclSamples <- if (missing(sampleFile)) 
+    lclSamples <- if (missing(sampleFile))
                     system.file("extdata", "sample_list.txt", package = "glida")
                   else sampleFile
-    lclOutput <- if (missing(ldOutput)) 
+    lclOutput <- if (missing(ldOutput))
                     unlist(strsplit(lclVCF, "\\."))[1]
                  else ldOutput
-    
+
     # If download is TRUE, or vcf file does not exists, download.
     if (download == TRUE | !file.exists(lclVCF)) {
         ldDownload(chromosome, start, end, outputVCF = lclVCF)
     }
-    
+
     # calculate LD using PLINK2 (see ../exec/getProxy.sh)
     ldCmd <- sprintf("%s %s %s %s %s",
                      system.file("bash", "getProxy.sh", package="glida"),
